@@ -19,16 +19,13 @@ class DbHelper private constructor(context: Context) :
             )
             """.trimIndent()
         )
-
+//建立一个用户表，包含用户名，密码，昵称，邮箱
     }
-
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        // 学习项目直接用「删表重建」，正式项目要改成 ALTER TABLE 增量迁移
-        db.execSQL("DROP TABLE IF EXISTS $TABLE_TODOS")
         db.execSQL("DROP TABLE IF EXISTS $TABLE_USERS")
         onCreate(db)
     }
-
+//当 App 的数据库版本号变了时，这段代码会把旧表全部删掉，然后按新代码重新建表
     companion object {
         const val TABLE_USERS = "users"
         const val TABLE_TODOS = "todos"
