@@ -32,7 +32,7 @@ class DbHelper private constructor(context: Context) :
 
         private const val DB_NAME = "login_app.db"
         private const val DB_VERSION = 1
-
+//定义数据库名称和版本号
         @Volatile
         private var instance: DbHelper? = null
 
