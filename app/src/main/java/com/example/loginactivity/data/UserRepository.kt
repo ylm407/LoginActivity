@@ -7,14 +7,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class UserRepository(context: Context) {
-
     // DbHelper 本身是单例，这里拿到的和其它地方是同一个连接
-    private val helper = DbHelper.get(context.applicationContext)
+    private val helper = DbHelper.get(context.applicationContext)//它声明了一个私有只读属性 helper，类型是 DbHelper，值是那个唯一的数据库管家
 
-    /**
-     * 注册。返回 true 表示插入成功；
-     * 返回 false 通常是用户名撞了 UNIQUE 约束（重名）。
-     */
     suspend fun register(username: String, password: String): Boolean = withContext(Dispatchers.IO) {
         val values = ContentValues().apply {
             put("username", username)

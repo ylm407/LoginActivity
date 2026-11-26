@@ -20,8 +20,26 @@ class DbHelper private constructor(context: Context) :
             """.trimIndent()
         )
 //建立一个用户表，包含用户名，密码，昵称，邮箱
+
+        db.execSQL(
+            """
+            CREATE TABLE $TABLE_TODOS (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                userId INTEGER NOT NULL,
+                title TEXT NOT NULL,
+                description TEXT NOT NULL DEFAULT '',
+                category TEXT NOT NULL DEFAULT '',
+                deadline INTEGER NOT NULL,
+                remindBeforeMinutes INTEGER NOT NULL DEFAULT 0,
+                isDone INTEGER NOT NULL DEFAULT 0
+            )
+            """.trimIndent()
+        )
+//建立待办表。userId 指向 users.id，用来区分“这条待办属于谁”
+//deadline 存毫秒时间戳（Long 类型），isDone 用 0/1 代替 true/false
     }
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        db.execSQL("DROP TABLE IF EXISTS $TABLE_TODOS")
         db.execSQL("DROP TABLE IF EXISTS $TABLE_USERS")//接受一个参数db，然后执行一条不返回数据的 SQL 语句
         onCreate(db)
     }
@@ -31,7 +49,7 @@ class DbHelper private constructor(context: Context) :
         const val TABLE_TODOS = "todos"
 
         private const val DB_NAME = "login_app.db"
-        private const val DB_VERSION = 1
+        private const val DB_VERSION = 2
 //定义数据库名称和版本号
         @Volatile
         private var instance: DbHelper? = null
