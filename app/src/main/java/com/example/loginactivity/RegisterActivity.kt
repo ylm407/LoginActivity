@@ -4,9 +4,12 @@ import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import com.example.loginactivity.data.UserRepository
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import kotlinx.coroutines.launch
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -20,6 +23,7 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var tvGoLogin: TextView
 
     private val session by lazy { SessionManager(this) }
+    private val repo by lazy { UserRepository(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,10 +80,22 @@ class RegisterActivity : AppCompatActivity() {
             return
         }
 
-        session.saveRemembered(username, password)
+        btnRegister.isEnabled = false
+        lifecycleScope.launch {
+            // 真正写库：成功 true，用户名撞了 UNIQUE 约束返回 false
+            val ok = repo.register(username, password)
+            btnRegister.isEnabled = true
 
-        Toast.makeText(this, getString(R.string.toast_register_success), Toast.LENGTH_SHORT).show()
-        setResult(RESULT_OK)
-        finish()
+            if (!ok) {
+                tilUsername.error = getString(R.string.error_username_exists)
+                return@launch
+            }
+
+            session.saveRemembered(username, password)
+
+            Toast.makeText(this@RegisterActivity, getString(R.string.toast_register_success), Toast.LENGTH_SHORT).show()
+            setResult(RESULT_OK)
+            finish()
+        }
     }
 }

@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import com.example.loginactivity.data.UserRepository
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.textfield.TextInputEditText
@@ -25,6 +26,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var tvGoRegister: TextView
 
     private val session by lazy { SessionManager(this) }
+    private val repo by lazy { UserRepository(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,9 +96,16 @@ class LoginActivity : AppCompatActivity() {
         btnLogin.isEnabled = false
         lifecycleScope.launch {
 
-            val userId = 1L
+            // 真正查库：账号密码同时匹配才拿到 User，否则 null
+            val user = repo.login(username, password)
+            btnLogin.isEnabled = true
 
-            session.saveLogin(userId)
+            if (user == null) {
+                tilPassword.error = getString(R.string.error_login_failed)
+                return@launch
+            }
+
+            session.saveLogin(user.id)
             if (cbRemember.isChecked) {
                 session.saveRemembered(username, password)
             } else {
@@ -105,7 +114,7 @@ class LoginActivity : AppCompatActivity() {
 
             Toast.makeText(
                 this@LoginActivity,
-                getString(R.string.toast_welcome, username),
+                getString(R.string.toast_welcome, user.username),
                 Toast.LENGTH_SHORT
             ).show()
             openMain()

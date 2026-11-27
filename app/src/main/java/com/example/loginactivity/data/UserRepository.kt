@@ -10,19 +10,16 @@ class UserRepository(context: Context) {
     // DbHelper 本身是单例，这里拿到的和其它地方是同一个连接
     private val helper = DbHelper.get(context.applicationContext)//它声明了一个私有只读属性 helper，类型是 DbHelper，值是那个唯一的数据库管家
 
-    suspend fun register(username: String, password: String): Boolean = withContext(Dispatchers.IO) {
+    suspend fun register(username: String, password: String): Boolean = withContext(Dispatchers.IO)// 切换到 IO 调度器（后台线程）去执行，并把执行结果作为函数返回值。
+    {
         val values = ContentValues().apply {
             put("username", username)
-            put("password", password)
+            put("password", password)//调用 ContentValues.put(列名, 值) 方法,存入DbHELPER表中
         }
         // insert 返回新行的 id，失败时返回 -1
         helper.writableDatabase.insert(DbHelper.TABLE_USERS, null, values) != -1L
     }
-
-    /**
-     * 登录校验：账号密码同时匹配才返回用户对象，否则返回 null。
-     * 注意 WHERE 里同时比对了 username 和 password，所以密码不对也查不到。
-     */
+    //在后台线程里，把用户名和密码装进 ContentValues，插入数据库，返回是否注册成功。
     suspend fun login(username: String, password: String): User? = withContext(Dispatchers.IO) {
         helper.readableDatabase.query(
             DbHelper.TABLE_USERS,
