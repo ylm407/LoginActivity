@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 待办类别，AddEditTodoActivity 的 Spinner 用 -->
+    <string-array name="categories">
+        <item>学习</item>
+        <item>工作</item>
+        <item>生活</item>
+        <item>其他</item>
+    </string-array>
+
+    <!-- 提醒提前量，顺序必须与 AddEditTodoActivity 的 remindValues 一致 -->
+    <string-array name="remind_options">
+        <item>截止时提醒</item>
+        <item>提前 5 分钟</item>
+        <item>提前 15 分钟</item>
+        <item>提前 30 分钟</item>
+        <item>提前 1 小时</item>
+    </string-array>
+</resources>

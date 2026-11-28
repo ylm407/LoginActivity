@@ -74,6 +74,27 @@ class TodoRepository(context: Context) {
             arrayOf(id.toString())
         )
     }
+
+    /**
+     * 开机后重新排提醒用：所有用户、未完成、截止时间还没到的待办。
+     * 不按 userId 过滤，因为重启时没人登录。
+     */
+    suspend fun listAllFuture(now: Long): List<Todo> = withContext(Dispatchers.IO) {
+        helper.readableDatabase.query(
+            DbHelper.TABLE_TODOS,
+            null,
+            "isDone = 0 AND deadline > ?",
+            arrayOf(now.toString()),
+            null,
+            null,
+            "deadline ASC"
+        ).use { cursor ->
+            buildList {
+                while (cursor.moveToNext()) add(cursor.toTodo())
+            }
+        }
+    }
+
     private fun Todo.toValues(): ContentValues = ContentValues().apply {
         put("userId", userId)
         put("title", title)

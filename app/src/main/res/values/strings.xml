@@ -11,4 +11,45 @@
     <string name="error_username_exists">该用户名已被注册</string>
     <string name="error_login_failed">账号或密码错误</string>
     <string name="toast_register_success">注册成功，请登录</string>
+
+    <!-- 底部导航页签 -->
+    <string name="tab_todo">待办</string>
+    <string name="tab_focus">专注</string>
+    <string name="tab_profile">我的</string>
+
+    <!-- 待办列表 -->
+    <string name="todo_header">我的待办</string>
+    <string name="todo_subtitle">按「未完成 → 截止时间」排序</string>
+    <string name="todo_empty">还没有待办\n点右下角 + 新建一条</string>
+    <string name="todo_no_desc">无描述</string>
+    <string name="todo_deadline">截止 %1$s</string>
+    <string name="todo_overdue">已逾期 · %1$s</string>
+
+    <!-- 新建 / 编辑待办 -->
+    <string name="action_new_todo">新建待办</string>
+    <string name="action_edit_todo">编辑待办</string>
+    <string name="hint_title">标题</string>
+    <string name="hint_desc">描述（可选）</string>
+    <string name="label_category">类别</string>
+    <string name="label_deadline">截止时间</string>
+    <string name="label_remind">提醒</string>
+    <string name="action_pick_deadline">选择日期和时间</string>
+    <string name="action_save">保 存</string>
+    <string name="error_title_empty">标题不能为空</string>
+    <string name="toast_saved">已保存</string>
+    <string name="confirm_delete_title">删除待办</string>
+    <string name="confirm_delete_message">确定删除「%1$s」吗？删除后不可恢复。</string>
+    <string name="action_delete">删除</string>
+    <string name="action_cancel">取消</string>
+
+    <!-- 通知提醒 -->
+    <string name="notify_todo_title">待办提醒：%1$s</string>
+    <string name="notify_todo_default_content">待办即将截止，点击查看详情</string>
+    <string name="notify_focus_title">专注完成</string>
+    <string name="notify_focus_text">「%1$s」已完成，休息一下吧</string>
+    <string name="channel_reminder">待办提醒</string>
+    <string name="channel_focus">专注提醒</string>
+    <string name="notify_permission_denied">未开启通知权限，到点提醒将无法显示</string>
+    <string name="error_session_expired">登录状态失效，请重新登录</string>
+    <string name="toast_module_not_ready">这个模块还没迁移过来</string>
 </resources>
