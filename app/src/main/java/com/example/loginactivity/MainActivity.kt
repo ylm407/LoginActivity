@@ -13,10 +13,18 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import androidx.fragment.app.Fragment
+import com.example.loginactivity.ui.focus.FocusFragment
+import com.example.loginactivity.ui.profile.ProfileFragment
 import com.example.loginactivity.ui.todo.TodoFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var todoFragment: TodoFragment
+    private lateinit var focusFragment: FocusFragment
+    private lateinit var profileFragment: ProfileFragment
+    private var activeFragment: Fragment? = null
 
     private val notificationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
@@ -53,23 +61,54 @@ class MainActivity : AppCompatActivity() {
 
         requestNotificationPermission()
 
+        val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
+
         if (savedInstanceState == null) {
+            todoFragment = TodoFragment()
+            focusFragment = FocusFragment()
+            profileFragment = ProfileFragment()
+
+            // 三个 Fragment 只加一次，之后用 show/hide 切换，专注计时不会因为切页被清掉
             supportFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, TodoFragment(), TAG_TODO)
+                .add(R.id.fragmentContainer, profileFragment, TAG_PROFILE).hide(profileFragment)
+                .add(R.id.fragmentContainer, focusFragment, TAG_FOCUS).hide(focusFragment)
+                .add(R.id.fragmentContainer, todoFragment, TAG_TODO)
                 .commit()
+
+            activeFragment = todoFragment
+        } else {
+            // 屏幕旋转 / 进程被回收后重建，把原来的实例找回来
+            todoFragment = supportFragmentManager.findFragmentByTag(TAG_TODO) as TodoFragment
+            focusFragment = supportFragmentManager.findFragmentByTag(TAG_FOCUS) as FocusFragment
+            profileFragment = supportFragmentManager.findFragmentByTag(TAG_PROFILE) as ProfileFragment
+            activeFragment = todoFragment
+
+            supportFragmentManager.beginTransaction()
+                .hide(focusFragment)
+                .hide(profileFragment)
+                .show(todoFragment)
+                .commit()
+            bottomNav.selectedItemId = R.id.nav_todo
         }
 
-        val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_todo -> true
-                else -> {
-                    // 专注 / 我的还没迁移，先按住不动
-                    Toast.makeText(this, R.string.toast_module_not_ready, Toast.LENGTH_SHORT).show()
-                    false
-                }
+                R.id.nav_todo -> showFragment(todoFragment)
+                R.id.nav_focus -> showFragment(focusFragment)
+                R.id.nav_profile -> showFragment(profileFragment)
             }
+            true
         }
+    }
+
+    private fun showFragment(target: Fragment) {
+        val current = activeFragment ?: return
+        if (current === target) return
+        supportFragmentManager.beginTransaction()
+            .hide(current)
+            .show(target)
+            .commit()
+        activeFragment = target
     }
 
     private fun requestNotificationPermission() {
@@ -85,5 +124,7 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val TAG_TODO = "tag_todo"
+        private const val TAG_FOCUS = "tag_focus"
+        private const val TAG_PROFILE = "tag_profile"
     }
 }
