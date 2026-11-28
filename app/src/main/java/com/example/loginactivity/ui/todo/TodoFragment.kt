@@ -17,19 +17,22 @@ import com.example.loginactivity.notify.AlarmScheduler
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.launch
 
-class TodoFragment : Fragment(R.layout.fragment_todo) {
+class TodoFragment : Fragment(R.layout.fragment_todo) //定义了一个名为 TodoFragment 的类，它继承自 Fragment，并且绑定了名为 fragment_todo 的布局
+{
 
     private lateinit var adapter: TodoAdapter
     private lateinit var repository: TodoRepository
     private lateinit var emptyView: TextView
-    private var userId: Long = -1L
+    /**延迟初始化，避免了后续的判空操作。
+      */
+    private var userId: Long = -1L//声明一个用于记录“当前用户身份”的变量，并给它设置了一个代表“未登录”或“无效”的初始状态。
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         repository = TodoRepository(requireContext())
-        userId = SessionManager(requireContext()).currentUserId()
-        emptyView = view.findViewById(R.id.tvEmpty)
+        userId = SessionManager(requireContext()).currentUserId()//获取当前登录用户的 ID，并赋值给你之前声明的那个 userId 变量。
+        emptyView = view.findViewById(R.id.tvEmpty)//
 
         adapter = TodoAdapter(
             onClick = { todo -> openEditor(todo.id) },
@@ -47,9 +50,9 @@ class TodoFragment : Fragment(R.layout.fragment_todo) {
     }
 
     override fun onResume() {
-        super.onResume()
-        // 从新增/编辑页回来时会走到这里，重新查一遍数据库
-        if (::adapter.isInitialized) loadTodos()
+        super.onResume()//调用父类 Fragment 中原本的 onResume() 方法
+        if (::adapter.isInitialized) loadTodos()//检查这个 lateinit 的变量到底有没有被赋过值
+        //// 从新增/编辑页回来时会走到这里，重新查一遍数据库
     }
 
     private fun loadTodos() {

@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:text="Welcome To TimeManager"
-            android:textSize="25dp"
+            android:textSize="25sp"
             android:textStyle="bold" />
         <TextView
             android:id="@+id/tvSlogan"
